@@ -1,3 +1,12 @@
 export interface IVigenere {
-  [key: string]: string;
+  message: string;
+  password: string;
+}
+
+export interface IDecodedMessage {
+  decoded: string;
+}
+
+export interface IEncodedMessage {
+  encoded: string;
 }

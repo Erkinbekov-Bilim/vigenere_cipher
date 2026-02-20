@@ -1,4 +1,5 @@
 export interface IVigenereMutation {
-  message: string;
+  messageEncode: string;
+  messageDecode: string;
   password: string;
 }
