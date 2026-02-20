@@ -1,7 +1,11 @@
-import React from 'react';
+import VigenereForm from './features/vigenere/components/VigenereForm/VigenereForm';
 
 const App = () => {
-  return <div>Init</div>;
+  return (
+    <>
+      <VigenereForm/>
+    </>
+  )
 };
 
 export default App;
