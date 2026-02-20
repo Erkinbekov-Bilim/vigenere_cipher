@@ -1,36 +1,48 @@
 import Caesar from 'caesar-salad';
 import type { ICipher } from '../../types/cipher/cipher.type.js';
-import { validateData } from '../../utils/validateData.js';
 import { type Response } from 'express';
+import cipherFileDb from '../../repositories/cipher.repository.js';
 
 export const vigenereHelper = async (
   data: ICipher,
   type: 'cipher' | 'decipher',
   res: Response,
 ) => {
-  const vigenerData: ICipher = {
-    message: data.message,
-    password: data.password,
-  };
-  const isValidateData = validateData(data, vigenerData);
-
-  if (isValidateData) {
-    if (type === 'cipher') {
-      const encodedMessage = Caesar.Vigenere.Cipher(vigenerData.password).crypt(
-        vigenerData.message,
-      );
-
-      return res.json({ encoded: encodedMessage });
-    } else if (type === 'decipher') {
-      const decodedMessage: string = Caesar.Vigenere.Decipher(
-        vigenerData.password,
-      ).crypt(vigenerData.message);
-
-      return res.json({ decoded: decodedMessage });
-    }
-  } else {
+  if (!data.message || !data.password) {
     return res.status(400).json({
-      error: `please enter your ${Object.keys(vigenerData).join(', ')}`,
+      error: 'Message and password required',
     });
+  }
+
+  if (type === 'cipher') {
+    const encodedMessage = Caesar.Vigenere.Cipher(data.password).crypt(
+      data.message,
+    );
+
+    await cipherFileDb.addCipher(encodedMessage, data.password);
+
+    return res.json({ encoded: encodedMessage });
+  }
+
+  if (type === 'decipher') {
+    const found = await cipherFileDb.findCipher(data.message);
+
+    if (!found) {
+      return res.status(404).json({
+        error: 'Cipher not found',
+      });
+    }
+
+    if (found.password !== data.password) {
+      return res.status(403).json({
+        error: 'Wrong password',
+      });
+    }
+
+    const decodedMessage = Caesar.Vigenere.Decipher(
+      data.password,
+    ).crypt(data.message);
+
+    return res.json({ decoded: decodedMessage });
   }
 };
