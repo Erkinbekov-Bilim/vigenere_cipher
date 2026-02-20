@@ -35,7 +35,7 @@ const cipherFileDb = {
   },
 
   async save() {
-    return writeFile(fileName, JSON.stringify(data, null, 2));
+    return writeFile(fileName, JSON.stringify(data));
   },
 };
 
