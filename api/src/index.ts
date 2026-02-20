@@ -2,6 +2,7 @@ import express, { type Express, type Request, type Response } from 'express';
 import { PORT } from './constants/constants.js';
 import cors from 'cors';
 import cipherRouter from './routes/cipher.routes.js';
+import cipherFileDb from './repositories/cipher.repository.js';
 
 const app: Express = express();
 
@@ -13,10 +14,12 @@ app.use((req: Request, res: Response) => {
   res.status(404).send({ error: 'not found' });
 });
 
-const run = () => {
+const run = async () => {
+  await cipherFileDb.init();
+
   app.listen(PORT, () => {
-    console.log(`Server: ${PORT}`);
+    console.log(PORT);
   });
 };
 
-run();
+run().catch((error) => console.error(error));
