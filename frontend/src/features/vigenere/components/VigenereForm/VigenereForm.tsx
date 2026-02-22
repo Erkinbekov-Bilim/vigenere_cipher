@@ -89,6 +89,7 @@ const VigenereForm = () => {
               {...register('password')}
               label="Password"
               sx={{ width: '250px' }}
+              type="password"
             />
             <Button variant="contained" onClick={handleSubmit(onEncode)}>
               <FontAwesomeIcon icon={faArrowDown} />
